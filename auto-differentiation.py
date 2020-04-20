@@ -124,6 +124,17 @@ class multiply:
         return self.in1 * self.in2
 
     def diff(self, val_map):
+        try:
+            self.local_grad1 = self.in1.diff(val_map)
+        except AttributeError:
+            pass
+        try:
+            self.local_grad2 = self.in2.diff(val_map)
+        except AttributeError:
+            pass
+
+'''
+    def diff(self, val_map):
         print("in mult diff")
         try:
             self.local_grad1 = self.in1.diff(val_map)
@@ -153,7 +164,7 @@ class multiply:
         print('grad1: ' + str(self.local_grad1))
         print('grad2: ' + str(self.local_grad2))
         return self.local_grad1 + self.local_grad2
-
+'''
 
 #print(evaluate(add(3, 'x'), {'x': 2, 'y': 5}))
 #print(differentiate(add(3, 'x'), {'x': 2, 'y': 5}))
