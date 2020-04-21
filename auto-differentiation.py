@@ -1,4 +1,6 @@
-
+"""
+Auto-diff for Anyscale
+"""
 
 def evaluate(expr, value_map):
     """Evaluate expr for a specific value of x.
@@ -28,7 +30,6 @@ def evaluate(expr, value_map):
             return value_map[expr]
         else:
             return expr
-
 
 def differentiate(expr, value_map):
     """Compute derivative of expr with respect to x for a specific value of x.
