@@ -235,17 +235,3 @@ class multiply:
                 if self.in2 in val_map:
                     self.in2 = val_map[self.in2]
         return self.local_grad1*self.in2 + self.local_grad2*self.in1
-
-
-print(evaluate(add(3, 'x'), {'x': 2, 'y': 5}))
-print(differentiate(add(3, 'x'), {'x': 2, 'y': 5}))
-print(differentiate(add(3, 3), {'x': 2, 'y': 5}))
-print(differentiate(add('y', 'x'), {'x': 2, 'y': 5}))
-print(differentiate(add('x', 'x'), {'x': 2, 'y': 5}))
-print(differentiate(multiply(3, 3), {'x': 2, 'y': 5}))
-print(differentiate(multiply(3, 'x'), {'x': 2, 'y': 5}))
-print(differentiate(multiply('x', 'y'), {'x': 2, 'y': 5}))
-print(differentiate(multiply('x', 'x'), {'x': 2, 'y': 5}))
-print(differentiate(multiply('x', 'x'), {'x': 3, 'y': 5}))
-print(differentiate(add(3, multiply('x', 'x')), {'x': 2, 'y': 5}))
-print(differentiate(add(3, add(multiply(2, 'x'), multiply('x', multiply('x', 'x')))), {'x': 2, 'y': 5}))
