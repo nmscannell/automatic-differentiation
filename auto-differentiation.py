@@ -63,6 +63,17 @@ def differentiate(expr, value_map):
 
 
 class add:
+    """ The add unit can take two inputs and calculate
+    the value of the add function evaluated on the two input.
+    It can also calculate the derivative of an add unit
+    with respect to 'x'.
+
+    Input:
+        expr1 and expr2: Expressions. These expressions can be the following:
+            (1) any real number
+            (2) 'x'
+            (3) operation(expr, expr), where operation can be either add or multiply
+    """
     def __init__(self, expr1, expr2):
         self.in1 = expr1
         self.in2 = expr2
@@ -70,6 +81,18 @@ class add:
         self.local_grad2 = 1
 
     def evaluate(self, val_map):
+        """ Computes the add function on the two inputs, self.in1 and self.in2.
+
+        Example:
+            >>> self.in1 = 3, self.in2 = x, self.evaluate({'x': 4})
+                7  # because 3 + 4 = 7
+
+        Input:
+            value_map: A dictionary specifying the values of variables.
+
+        Output:
+            The result of self.in1 + self.in2
+        """
         try:
             self.in1 = self.in1.evaluate(val_map)
         except AttributeError:
@@ -83,7 +106,26 @@ class add:
         return self.in1 + self.in2
 
     def diff(self, val_map):
-        # diff of x + y = dx + dy
+        """ Computes the derivative of addition of two inputs, self.in1 and self.in2
+        with respect to 'x'. d/dx[self.in1 + self.in2] = d(self.in1)/dx + d(self.in2)/dx
+        --The derivative of a constant or variable that is not 'x' with respect to 'x' is 0.
+        --The derivative of 'x' with respect to 'x' is 1.
+        --If one of the inputs is an operation, its derivative must be found.
+
+        Examples:
+            >>> self.in1 = 3, self.in2 = x, self.diff({'x': 4})
+                1  # because d/dx[3 + x] = 0 + 1 = 1
+
+            >>> self.in1 = x, self.in2 = x, self.diff({'x': 4})
+                2  # because d/dx[x + x] = 1 + 1 = 2
+
+        Input:
+            value_map: A dictionary specifying the values of variables.
+
+        Output:
+            The result of d/dx[self.in1 + self.in2]
+        """
+
         try:
             self.local_grad1 = self.in1.diff(val_map)
         except AttributeError:
@@ -122,7 +164,28 @@ class multiply:
         return self.in1 * self.in2
 
     def diff(self, val_map):
-        # derivative of x*y = x*dy + dx*y
+        """ Computes the derivative of multiplication of two inputs, self.in1 and self.in2
+        with respect to 'x'. By the product rule,
+        d/dx[self.in1 * self.in2] = (d(self.in1)/dx) * self.in2 + (d(self.in2)/dx) * self.in1
+        --The derivative of a constant or variable that is not 'x' with respect to 'x' is 0.
+        --The derivative of 'x' with respect to 'x' is 1.
+        --If one of the inputs is an operation, its derivative must be found.
+        --If one of the inputs is an operation or in the value map, it must be evaluated and updated.
+
+        Examples:
+            >>> self.in1 = 3, self.in2 = x, self.diff({'x': 4})
+                3  # because d/dx[3 * x] = d/dx[3] * x + d/dx[x] * 3 = 0 + 3 = 3
+
+            >>> self.in1 = x, self.in2 = x, self.diff({'x': 4})
+                8  # because d/dx[x * x] = d/dx[x] * x + d/dx[x] * x = x + x = 8
+
+        Input:
+            value_map: A dictionary specifying the values of variables.
+
+        Output:
+            The result of d/dx[self.in1 * self.in2]
+        """
+
         try:
             self.local_grad1 = self.in1.diff(val_map)
             self.in1 = self.in1.evaluate(val_map)
