@@ -17,11 +17,7 @@ class TestAutodiff(unittest.TestCase):
         x = add(3, 4)
         self.assertEqual(3, x.in1)
         self.assertEqual(4, x.in2)
-        self.assertEqual(1, x.local_grad1)
-        self.assertEqual(1, x.local_grad2)
         self.assertEqual(x.diff({}), 0)
-        self.assertEqual(3, x.in1)
-        self.assertEqual(4, x.in2)
         self.assertEqual(0, x.local_grad1)
         self.assertEqual(0, x.local_grad2)
 
@@ -37,11 +33,7 @@ class TestAutodiff(unittest.TestCase):
         x = add(3, 'x')
         self.assertEqual(3, x.in1)
         self.assertEqual('x', x.in2)
-        self.assertEqual(1, x.local_grad1)
-        self.assertEqual(1, x.local_grad2)
         self.assertEqual(x.diff({'x': 2}), 1)
-        self.assertEqual(3, x.in1)
-        self.assertEqual(2, x.in2)
         self.assertEqual(0, x.local_grad1)
         self.assertEqual(1, x.local_grad2)
 
@@ -58,38 +50,30 @@ class TestAutodiff(unittest.TestCase):
         x = multiply(3, 4)
         self.assertEqual(3, x.in1)
         self.assertEqual(4, x.in2)
-        self.assertEqual(4, x.local_grad1)
-        self.assertEqual(3, x.local_grad2)
         self.assertEqual(x.diff({}), 0)
-        self.assertEqual(3, x.in1)
-        self.assertEqual(4, x.in2)
         self.assertEqual(0, x.local_grad1)
         self.assertEqual(0, x.local_grad2)
 
     def test_multiply_var_evaluate(self):
         x = multiply(3, 'x')
-        self.assertIsInstance(x, multiply)
         self.assertEqual(3, x.in1)
-        self.assertNotEqual(3, x.in2)
         self.assertEqual('x', x.in2)
-        self.assertNotEqual('x', x.in1)
         self.assertEqual(x.evaluate({'x': 2}), 6)
+        self.assertEqual(3, x.in1)
+        self.assertEqual(2, x.in2)
 
     def test_multiply_var_diff(self):
         x = multiply(3, 'x')
         self.assertEqual(3, x.in1)
         self.assertEqual('x', x.in2)
-        self.assertEqual('x', x.local_grad1)
-        self.assertEqual(3, x.local_grad2)
         self.assertEqual(x.diff({'x': 2}), 3)
-        self.assertEqual(3, x.in1)
-        self.assertEqual(2, x.in2)
         self.assertEqual(0, x.local_grad1)
         self.assertEqual(1, x.local_grad2)
 
     def test_evaluate_no_ops(self):
         self.assertEqual(evaluate(3, {'x': 2}), 3)
         self.assertEqual(evaluate('x', {'x': 2}), 2)
+        self.assertEqual(evaluate('x', {'y': 2}), 'x')
         self.assertEqual(evaluate('y', {'y': 2}), 2)
 
     def test_evaluate_simple_add(self):
@@ -114,6 +98,9 @@ class TestAutodiff(unittest.TestCase):
     def test_evaluate_compound_ops(self):
         self.assertEqual(evaluate(add(3, multiply('x', 'x')), {'x': 2, 'y': 5}), 7)
         self.assertEqual(evaluate(add(3, add(multiply(2, 'x'), multiply('x', multiply('x', 'x')))), {'x': 2}), 15)
+        self.assertEqual(
+            evaluate(add(3, add(multiply(2, multiply('x', 'x')), multiply(4, multiply('x', multiply('x', 'x'))))),
+                     {'x': 2}), 43)
 
     def test_differentiate_no_ops(self):
         self.assertEqual(differentiate(3, {'x': 2}), 0)
@@ -142,6 +129,9 @@ class TestAutodiff(unittest.TestCase):
     def test_differentiate_compount_ops(self):
         self.assertEqual(differentiate(add(3, multiply('x', 'x')), {'x': 2, 'y': 5}), 4)
         self.assertEqual(differentiate(add(3, add(multiply(2, 'x'), multiply('x', multiply('x', 'x')))), {'x': 2}), 14)
+        self.assertEqual(
+            differentiate(add(3, add(multiply(2, multiply('x', 'x')), multiply(4, multiply('x', multiply('x', 'x'))))),
+                     {'x': 2}), 56)
 
 
 if __name__ == '__main__':
