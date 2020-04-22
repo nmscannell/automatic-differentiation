@@ -137,6 +137,7 @@ class add:
             self.local_grad2 = self.in2.diff(val_map)
         except AttributeError:
             if self.in2 == 'x':
+                print('input is x')
                 self.local_grad2 = 1
             else:
                 self.local_grad2 = 0
